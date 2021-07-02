@@ -1,8 +1,6 @@
 import pygame
-import math
 from queue import PriorityQueue
 
-from pygame.constants import K_ESCAPE
 
 #window initialization
 WIDTH = 800
@@ -19,6 +17,7 @@ BLACK = (0, 0, 0)
 GRAY = (128, 128, 128)
 TURQUOISE = (64, 224, 208)
 
+#class to represent each cell(node) of grid on screen
 class Node:
     def __init__(self, row, col, width, totalRows):
         self.row = row
@@ -89,6 +88,7 @@ class Node:
     def __lt__(self, other):
         return False
         
+#function to calculate heuristic distance between two points
 def h(p1, p2):
     x1, y1 = p1
     x2, y2 = p2
@@ -101,6 +101,7 @@ def reconstructPath(cameFrom, current, grid, rows, width):
         current.makePath()
         draw(screen, grid, rows, width)
 
+#main A* algorithm
 def algorithm(grid, start, end, rows, width):
     count = 0
     pq = PriorityQueue()
@@ -151,26 +152,29 @@ def algorithm(grid, start, end, rows, width):
 
     return False
 
+#creates grid of nodes and returns it
 def makeGrid(rows, width):
     grid = []
-    gap = width // rows
+    cellSize = width // rows
     for i in range (rows):
         grid.append([])
         for j in range(rows):
-            node = Node(i, j, gap, rows)
+            node = Node(i, j, cellSize, rows)
             grid[i].append(node)
     
     return grid
 
+#draws grid lines of gray color
 def drawGrid(screen, rows, width):
-    gap = width // rows
+    cellSize = width // rows
 
-    for i in range(rows):
-        pygame.draw.line(screen, GRAY, (0, i*gap), (width, i*gap))
-    for j in range(rows):
-        pygame.draw.line(screen, GRAY, (j*gap, 0), (j*gap, width))
+    for i in range(rows): #draw horizontal lines
+        pygame.draw.line(screen, GRAY, (0, i*cellSize), (width, i*cellSize))
+    for j in range(rows): #draw vertical lines
+        pygame.draw.line(screen, GRAY, (j*cellSize, 0), (j*cellSize, width))
 
 def draw(screen, grid, rows, width):
+    #first clear screen
     screen.fill(WHITE)
 
     for row in grid:
@@ -181,26 +185,27 @@ def draw(screen, grid, rows, width):
 
     pygame.display.update()
 
+#returns on which node mouse is clicked
 def getClickedPos(pos, rows, width):
-    gap = width // rows
+    cellSize = width // rows
     y, x = pos
-    row = y //  gap
-    col = x // gap
+    row = y //  cellSize
+    col = x // cellSize
     
     return row, col
 
 def main(screen, width):
-    ROWS = 50
+    ROWS = 50 #no. of rows and columns in the grid
 
     grid = makeGrid(ROWS, width)
 
     start = None #start node
     end = None # end node
 
+    started = False #whether the algorithm has started
+
     run = True
 
-    started = False # whether the algorithm started
-    
     while run:
         draw(screen=screen, grid=grid, rows=ROWS, width=width)
 
@@ -219,6 +224,7 @@ def main(screen, width):
                 row, col = getClickedPos(pos, ROWS, width)
                 node = grid[row][col]
 
+                #make sure not to make start and end same
                 if not start and node != end:
                     start = node
                     start.makeStart()
@@ -240,13 +246,20 @@ def main(screen, width):
                     end = None
             
             if event.type == pygame.KEYDOWN:
+                #on pressing space the algorithm starts
                 if event.key == pygame.K_SPACE and start and end:
                     for row in grid:
                         for node in row:
                             node.updateNeighbors(grid)
 
-                    algorithm(grid, start, end, ROWS, width)
-            
+                    started = True
+                    if algorithm(grid, start, end, ROWS, width):
+                        print("path found!!!")
+                    else:
+                        print("path not found!!!")
+                    started = False
+
+                #reset the canvas
                 if event.key == pygame.K_c:
                     start = None
                     end = None
