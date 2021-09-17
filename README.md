@@ -1,9 +1,10 @@
 # pathfinding
-A desktop application made using PyGame module in Python Language. Using `A* algorithm`, it finds shortest path from source point to destination point.                                                                                 
-While doing so, it animates the whole process which gives more insight of the algorithm and understanding.
+A desktop application made using PyGame module in Python Language. Using `A* algorithm`, it finds shortest path from source point to destination point.                              While doing so, it animates the whole process which gives more insight of the algorithm and understanding.
 
-### ScreenShots :
+### Screenshots:
+
 ![1](https://github.com/vivek18f/pathfinding/blob/master/img/Pathfinding1.png)
+
 ![2](https://github.com/vivek18f/pathfinding/blob/master/img/Pathfinding2.png)
 
 ### To run it on your PC:
